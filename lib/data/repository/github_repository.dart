@@ -18,8 +18,12 @@ class GithubRepository {
     int? page,
     int? perPage,
   }) async {
+    final apiQuery = _buildQuery(query, languages);
+    if (apiQuery.isEmpty) {
+      return (0, <Repository>[]);
+    }
     final response = await api.searchRepositories(
-      query: _buildQuery(query, languages),
+      query: apiQuery,
       sort: sort,
       order: order,
       page: page,
@@ -29,8 +33,11 @@ class GithubRepository {
   }
 
   String _buildQuery(String query, List<String> languages) {
-    return "jaspr";
     final languageQuery = languages.map((e) => "language:$e").join(" ");
-    return "$query+$languageQuery".trim();
+    return query.isEmpty
+        ? languageQuery.isEmpty
+            ? ""
+            : languageQuery
+        : "$query+$languageQuery";
   }
 }

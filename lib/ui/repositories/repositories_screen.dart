@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repositories_view_model.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
+import 'package:riverpod_pagination_example/ui/widgets/search_bar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class RepositoriesScreen extends ConsumerStatefulWidget {
@@ -13,30 +15,43 @@ class RepositoriesScreen extends ConsumerStatefulWidget {
 
 class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
   late final viewModel = ref.read(repositoriesViewModelProvider.notifier);
+  late final filterController = ref.read(repositoryFilterNotifierProvider.notifier);
 
   @override
   Widget build(BuildContext context) {
     final repositoriesState = ref.watch(repositoriesViewModelProvider);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riverpod Pagination Demo'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: NotificationListener(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo is ScrollEndNotification &&
-              scrollInfo.metrics.axisDirection == AxisDirection.down &&
-              scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent) {
-            viewModel.loadNextPage();
-          }
-          return true;
-        },
-        child: RefreshIndicator(
-          onRefresh: () async {
-            //TODO: Implement refresh
+      body: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        child: NotificationListener(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollEndNotification &&
+                scrollInfo.metrics.axisDirection == AxisDirection.down &&
+                scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent) {
+              if (viewModel.canLoadMore) {
+                viewModel.loadNextPage();
+              }
+            }
+            return true;
           },
-          child: CustomScrollView(
-            slivers: [
-              ...repositories(context, repositoriesState),
-            ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              //TODO: Implement refresh
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    sliver: SliverToBoxAdapter(child: StyledSearchBar(onSearch: onSearch, debounceDuration: 500))),
+                ...repositories(context, repositoriesState),
+              ],
+            ),
           ),
         ),
       ),
@@ -112,5 +127,10 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
         ),
       ),
     );
+  }
+
+  void onSearch(String query) {
+    filterController.updateQuery(query);
+    viewModel.applyFilter(ref.read(repositoryFilterNotifierProvider));
   }
 }
