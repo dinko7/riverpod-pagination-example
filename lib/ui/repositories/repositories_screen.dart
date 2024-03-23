@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repositories_view_model.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_item.dart';
+import 'package:riverpod_pagination_example/ui/widgets/filter_button.dart';
 import 'package:riverpod_pagination_example/ui/widgets/search_bar.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -47,8 +49,9 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    sliver: SliverToBoxAdapter(child: StyledSearchBar(onSearch: onSearch, debounceDuration: 500))),
+                  padding: const EdgeInsets.only(bottom: 16),
+                  sliver: searchAndFilter(context),
+                ),
                 ...repositories(context, repositoriesState),
               ],
             ),
@@ -74,13 +77,7 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
             : [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final repository = repositories[index];
-                      return ListTile(
-                        title: Text(repository.name),
-                        subtitle: Text(repository.description),
-                      );
-                    },
+                    (context, index) => RepositoryItem(repository: repositories[index]),
                     childCount: repositories.length,
                   ),
                 ),
@@ -125,6 +122,24 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget searchAndFilter(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: StyledSearchBar(onSearch: onSearch, debounceDuration: 500)),
+          const SizedBox(width: 8),
+          FilterButton(
+            onTap: () {
+              //TODO: show bottom sheet
+            },
+          ),
+        ],
       ),
     );
   }

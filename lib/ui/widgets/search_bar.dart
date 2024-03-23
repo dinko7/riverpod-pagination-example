@@ -20,19 +20,26 @@ class StyledSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onChanged: (val) {
-        debounceDuration == null
-            ? onSearch(val)
-            : _debouncer.run(() {
-                onSearch(val);
-              });
-      },
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: const Icon(Icons.search),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    return SizedBox(
+      height: 48,
+      child: TextField(
+        onChanged: (val) {
+          debounceDuration == null
+              ? onSearch(val)
+              : _debouncer.run(() {
+                  onSearch(val);
+                });
+        },
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: const Icon(Icons.search),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
         ),
       ),
     );
