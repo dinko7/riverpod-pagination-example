@@ -7,11 +7,10 @@ extension RepositoryMapper on RepositoryGet {
         name: name,
         fullName: fullName,
         htmlUrl: htmlUrl,
-        description: description,
+        description: description ?? "",
         stargazersCount: stargazersCount,
         forksCount: forksCount,
         watchersCount: watchersCount,
-        language: language,
-        updatedAt: updatedAt,
+        ownerImageUrl: owner.avatarUrl,
       );
 }

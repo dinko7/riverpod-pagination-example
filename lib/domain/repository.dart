@@ -13,7 +13,6 @@ class Repository with _$Repository {
     required int stargazersCount,
     required int forksCount,
     required int watchersCount,
-    required String language,
-    required String updatedAt,
+    required String ownerImageUrl,
   }) = _Repository;
 }

@@ -4,8 +4,11 @@ part 'paginated_response.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class PaginatedResponse<T> {
+  @JsonKey(name: 'incomplete_results')
   final bool incompleteResults;
+  @JsonKey(name: 'items')
   final List<T> items;
+  @JsonKey(name: 'total_count')
   final int totalCount;
 
   PaginatedResponse({
