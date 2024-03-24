@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repositories_view_model.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_filter_bottom_sheet.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_item.dart';
+import 'package:riverpod_pagination_example/ui/widgets/filter_button.dart';
+import 'package:riverpod_pagination_example/ui/widgets/search_bar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class RepositoriesScreen extends ConsumerStatefulWidget {
@@ -13,43 +18,57 @@ class RepositoriesScreen extends ConsumerStatefulWidget {
 
 class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
   late final viewModel = ref.read(repositoriesViewModelProvider.notifier);
+  late final filterController = ref.read(repositoryFilterNotifierProvider.notifier);
 
   @override
   Widget build(BuildContext context) {
     final repositoriesState = ref.watch(repositoriesViewModelProvider);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riverpod Pagination Demo'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: NotificationListener(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo is ScrollEndNotification &&
-              scrollInfo.metrics.axisDirection == AxisDirection.down &&
-              scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent) {
-            viewModel.loadNextPage();
-          }
-          return true;
-        },
-        child: RefreshIndicator(
-          onRefresh: () async {
-            //TODO: Implement refresh
+      body: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        child: NotificationListener(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollEndNotification &&
+                scrollInfo.metrics.axisDirection == AxisDirection.down &&
+                scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent) {
+              if (viewModel.canLoadMore) {
+                viewModel.loadNextPage();
+              }
+            }
+            return true;
           },
-          child: CustomScrollView(
-            slivers: [
-              ...repositories(context, repositoriesState),
-            ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              viewModel.refresh();
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  sliver: searchAndFilter(context),
+                ),
+                ...repositories(context, repositoriesState),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> repositories(BuildContext context, AsyncValue<List<Repository>> vacationsState) {
-    final repositories = vacationsState.valueOrNull ?? [];
-    final initialLoading = vacationsState.isLoading && repositories.isEmpty;
-    final loadingMore = vacationsState.isLoading && repositories.isNotEmpty;
+  List<Widget> repositories(BuildContext context, AsyncValue<List<Repository>> repositoryState) {
+    final repositories = repositoryState.valueOrNull ?? [];
+    final initialLoading = repositoryState.isLoading && repositories.isEmpty;
+    final loadingMore = repositoryState.isLoading && repositories.isNotEmpty;
 
-    if (vacationsState.hasError) {
-      return [SliverToBoxAdapter(child: Text('Error: ${vacationsState.error}'))];
+    if (repositoryState.hasError) {
+      return error(repositoryState);
     }
 
     return initialLoading
@@ -59,19 +78,16 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
             : [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final repository = repositories[index];
-                      return ListTile(
-                        title: Text(repository.name),
-                        subtitle: Text(repository.description),
-                      );
-                    },
+                    (context, index) => RepositoryItem(repository: repositories[index]),
                     childCount: repositories.length,
                   ),
                 ),
                 if (loadingMore) const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
               ];
   }
+
+  List<Widget> error(AsyncValue<List<Repository>> repositoryState) =>
+      [SliverToBoxAdapter(child: Text('Error: ${repositoryState.error}'))];
 
   List<Widget> noSearchResultsFound(BuildContext context) {
     return [
@@ -112,5 +128,43 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
         ),
       ),
     );
+  }
+
+  Widget searchAndFilter(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: StyledSearchBar(onSearch: onSearch, debounceDuration: 500)),
+          const SizedBox(width: 8),
+          FilterButton(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return RepositoryFilterBottomSheet(
+                    filterProvider: repositoryFilterNotifierProvider,
+                    onFilterChanged: (newFilter) {
+                      filterController.update(newFilter);
+                      applyFilter();
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void applyFilter() {
+    viewModel.applyFilter(ref.read(repositoryFilterNotifierProvider));
+  }
+
+  void onSearch(String query) {
+    filterController.updateQuery(query);
+    applyFilter();
   }
 }
