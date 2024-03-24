@@ -45,7 +45,7 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
           },
           child: RefreshIndicator(
             onRefresh: () async {
-              //TODO: Implement refresh
+              viewModel.refresh();
             },
             child: CustomScrollView(
               slivers: [
@@ -62,13 +62,13 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     );
   }
 
-  List<Widget> repositories(BuildContext context, AsyncValue<List<Repository>> vacationsState) {
-    final repositories = vacationsState.valueOrNull ?? [];
-    final initialLoading = vacationsState.isLoading && repositories.isEmpty;
-    final loadingMore = vacationsState.isLoading && repositories.isNotEmpty;
+  List<Widget> repositories(BuildContext context, AsyncValue<List<Repository>> repositoryState) {
+    final repositories = repositoryState.valueOrNull ?? [];
+    final initialLoading = repositoryState.isLoading && repositories.isEmpty;
+    final loadingMore = repositoryState.isLoading && repositories.isNotEmpty;
 
-    if (vacationsState.hasError) {
-      return [SliverToBoxAdapter(child: Text('Error: ${vacationsState.error}'))];
+    if (repositoryState.hasError) {
+      return error(repositoryState);
     }
 
     return initialLoading
@@ -85,6 +85,9 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
                 if (loadingMore) const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
               ];
   }
+
+  List<Widget> error(AsyncValue<List<Repository>> repositoryState) =>
+      [SliverToBoxAdapter(child: Text('Error: ${repositoryState.error}'))];
 
   List<Widget> noSearchResultsFound(BuildContext context) {
     return [

@@ -28,7 +28,7 @@ class GithubRepository {
       sort: sort?.value,
       order: order?.value,
       page: page,
-      perPage: perPage,
+      perPage: perPage ?? 10,
     );
     return (response.totalCount, response.items.map((e) => e.toDomain()).toList());
   }

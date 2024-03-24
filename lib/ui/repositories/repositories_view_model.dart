@@ -42,4 +42,9 @@ class RepositoriesViewModel extends AsyncNotifier<List<Repository>>
   void _updateCanLoadMore(List<Repository> items, int totalItems) {
     _canLoadMore = (state.value?.length ?? 0 + items.length) < totalItems;
   }
+
+  void refresh() {
+    currentPage = initialPage;
+    applyFilter(currentFilter);
+  }
 }
