@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repositories_view_model.dart';
+import 'package:riverpod_pagination_example/ui/repositories/repository_filter_bottom_sheet.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_item.dart';
 import 'package:riverpod_pagination_example/ui/widgets/filter_button.dart';
@@ -136,7 +137,18 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
           const SizedBox(width: 8),
           FilterButton(
             onTap: () {
-              //TODO: show bottom sheet
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return RepositoryFilterBottomSheet(
+                    filterProvider: repositoryFilterNotifierProvider,
+                    onFilterChanged: (newFilter) {
+                      filterController.update(newFilter);
+                      applyFilter();
+                    },
+                  );
+                },
+              );
             },
           ),
         ],
@@ -144,8 +156,12 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     );
   }
 
+  void applyFilter() {
+    viewModel.applyFilter(ref.read(repositoryFilterNotifierProvider));
+  }
+
   void onSearch(String query) {
     filterController.updateQuery(query);
-    viewModel.applyFilter(ref.read(repositoryFilterNotifierProvider));
+    applyFilter();
   }
 }

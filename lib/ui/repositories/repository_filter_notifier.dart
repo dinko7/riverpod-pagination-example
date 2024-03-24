@@ -12,15 +12,7 @@ class RepositoryFilterNotifier extends Notifier<RepositoryFilter> {
     state = state.copyWith(query: query);
   }
 
-  void updateSort(String? sort) {
-    state = state.copyWith(sort: sort);
-  }
-
-  void updateOrder(String? order) {
-    state = state.copyWith(order: order);
-  }
-
-  void updateLanguages(List<String> languages) {
-    state = state.copyWith(languages: languages);
+  void update(RepositoryFilter filter) {
+    state = filter;
   }
 }

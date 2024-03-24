@@ -50,7 +50,7 @@ class RepositoryItem extends StatelessWidget {
                     const SizedBox(width: 5),
                     Text(
                       repository.stargazersCount.toString(),
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
