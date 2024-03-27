@@ -7,7 +7,7 @@ import 'package:riverpod_pagination_example/data/remote/network.dart';
 
 part 'github_api.g.dart';
 
-final githubApiProvider = Provider((ref) => GithubApi(ref.read(dioProvider)));
+final githubApiProvider = Provider((ref) => GithubApi(ref.watch(dioProvider)));
 
 @RestApi()
 abstract class GithubApi {
