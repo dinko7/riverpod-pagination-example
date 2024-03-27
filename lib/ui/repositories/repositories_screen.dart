@@ -17,8 +17,9 @@ class RepositoriesScreen extends ConsumerStatefulWidget {
 }
 
 class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
-  late final viewModel = ref.read(repositoriesViewModelProvider.notifier);
-  late final filterController = ref.read(repositoryFilterNotifierProvider.notifier);
+  RepositoriesViewModel get viewModel => ref.read(repositoriesViewModelProvider.notifier);
+
+  RepositoryFilterNotifier get filterController => ref.read(repositoryFilterNotifierProvider.notifier);
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +137,7 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(child: StyledSearchBar(onSearch: onSearch, debounceDuration: 500)),
+          Expanded(child: StyledSearchBar(onSearch: onSearch, debounceDuration: const Duration(milliseconds: 500))),
           const SizedBox(width: 8),
           FilterButton(
             onTap: () {

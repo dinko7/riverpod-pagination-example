@@ -4,7 +4,7 @@ import 'package:riverpod_pagination_example/data/remote/github_api.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/domain/repository_filter.dart';
 
-final githubRepositoryProvider = Provider((ref) => GithubRepository(ref.read(githubApiProvider)));
+final githubRepositoryProvider = Provider((ref) => GithubRepository(ref.watch(githubApiProvider)));
 
 class GithubRepository {
   final GithubApi api;

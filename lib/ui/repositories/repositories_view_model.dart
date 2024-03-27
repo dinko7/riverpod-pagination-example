@@ -12,7 +12,7 @@ final repositoriesViewModelProvider =
 
 class RepositoriesViewModel extends AsyncNotifier<List<Repository>>
     with AsyncPaginationController<Repository, int>, AsyncPaginationFilter<RepositoryFilter, Repository, int> {
-  late final repository = ref.read(githubRepositoryProvider);
+  GithubRepository get repository => ref.read(githubRepositoryProvider);
 
   var _canLoadMore = true;
 

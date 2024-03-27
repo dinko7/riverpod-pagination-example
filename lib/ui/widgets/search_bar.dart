@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_pagination_example/utils/debouncer.dart';
 
 class StyledSearchBar extends StatelessWidget {
-  final int? debounceDuration;
+  final Duration? debounceDuration;
   final String? hint;
   final Function(String) onSearch;
   late final Debouncer _debouncer;
@@ -14,7 +14,7 @@ class StyledSearchBar extends StatelessWidget {
     required this.onSearch,
   }) {
     if (debounceDuration != null) {
-      _debouncer = Debouncer(milliseconds: debounceDuration!);
+      _debouncer = Debouncer(duration: debounceDuration!);
     }
   }
 
