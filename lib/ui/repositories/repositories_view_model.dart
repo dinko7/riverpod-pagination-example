@@ -29,7 +29,8 @@ class RepositoriesViewModel extends AsyncNotifier<List<Repository>>
         sort: currentFilter.sort,
         order: currentFilter.order,
         page: page);
-    _updateCanLoadMore(items, totalItems);
+    final previousLength = state.valueOrNull?.length ?? 0;
+    _canLoadMore = previousLength + items.length < totalItems;
     return items;
   }
 
@@ -38,10 +39,6 @@ class RepositoriesViewModel extends AsyncNotifier<List<Repository>>
 
   @override
   RepositoryFilter currentFilter = const RepositoryFilter();
-
-  void _updateCanLoadMore(List<Repository> items, int totalItems) {
-    _canLoadMore = (state.value?.length ?? 0 + items.length) < totalItems;
-  }
 
   void refresh() {
     currentPage = initialPage;

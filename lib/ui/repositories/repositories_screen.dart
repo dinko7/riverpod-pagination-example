@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_pagination_example/domain/repository.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repositories_view_model.dart';
-import 'package:riverpod_pagination_example/ui/repositories/repository_filter_bottom_sheet.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_item.dart';
-import 'package:riverpod_pagination_example/ui/widgets/filter_button.dart';
-import 'package:riverpod_pagination_example/ui/widgets/search_bar.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:riverpod_pagination_example/ui/widgets/search_filter_row.dart';
+import 'package:riverpod_pagination_example/ui/widgets/sliver_async_error.dart';
+import 'package:riverpod_pagination_example/ui/widgets/sliver_empty_search.dart';
+import 'package:riverpod_pagination_example/ui/widgets/sliver_list_tile_shimmer.dart';
+import 'package:riverpod_pagination_example/ui/widgets/sliver_loading_spinner.dart';
 
 class RepositoriesScreen extends ConsumerStatefulWidget {
   const RepositoriesScreen({super.key});
@@ -52,7 +53,14 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  sliver: searchAndFilter(context),
+                  sliver: SearchFilterRow(
+                    onSearch: onSearch,
+                    filterProvider: repositoryFilterNotifierProvider,
+                    onFilterChanged: (newFilter) {
+                      filterController.update(newFilter);
+                      applyFilter();
+                    },
+                  ),
                 ),
                 ...repositories(context, repositoriesState),
               ],
@@ -69,13 +77,13 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     final loadingMore = repositoryState.isLoading && repositories.isNotEmpty;
 
     if (repositoryState.hasError) {
-      return error(repositoryState);
+      return [SliverAsyncError(asyncValue: repositoryState)];
     }
 
     return initialLoading
         ? shimmerLoading()
         : repositories.isEmpty
-            ? noSearchResultsFound(context)
+            ? [const SliverEmptySearch(text: "No repositories found")]
             : [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -83,81 +91,12 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
                     childCount: repositories.length,
                   ),
                 ),
-                if (loadingMore) const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
+                if (loadingMore) const SliverLoadingSpinner(),
               ];
   }
 
-  List<Widget> error(AsyncValue<List<Repository>> repositoryState) =>
-      [SliverToBoxAdapter(child: Text('Error: ${repositoryState.error}'))];
-
-  List<Widget> noSearchResultsFound(BuildContext context) {
-    return [
-      SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.search_off, size: 100),
-              const SizedBox(height: 16),
-              Text('No repositories found', style: Theme.of(context).textTheme.headline6),
-            ],
-          ),
-        ),
-      ),
-    ];
-  }
-
   List<Widget> shimmerLoading() {
-    return List.generate(
-      10,
-      (index) => SliverToBoxAdapter(
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
-          child: ListTile(
-            title: Container(
-              width: double.infinity,
-              height: 16,
-              color: Colors.white,
-            ),
-            subtitle: Container(
-              width: double.infinity,
-              height: 16,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget searchAndFilter(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(child: StyledSearchBar(onSearch: onSearch, debounceDuration: const Duration(milliseconds: 500))),
-          const SizedBox(width: 8),
-          FilterButton(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return RepositoryFilterBottomSheet(
-                    filterProvider: repositoryFilterNotifierProvider,
-                    onFilterChanged: (newFilter) {
-                      filterController.update(newFilter);
-                      applyFilter();
-                    },
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
+    return List.generate(10, (index) => const SliverListTileShimmer());
   }
 
   void applyFilter() {
