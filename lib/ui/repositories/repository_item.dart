@@ -36,7 +36,9 @@ class RepositoryItem extends StatelessWidget {
                   Text(
                     repository.description,
                     style: const TextStyle(fontSize: 14),
-                  ),
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                  )
                 ],
               ),
             ),
