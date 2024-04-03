@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SliverAsyncError extends StatelessWidget {
-  final AsyncValue<dynamic> asyncValue;
+class SliverErrorMessage extends StatelessWidget {
+  const SliverErrorMessage({super.key, required this.error});
 
-  const SliverAsyncError({Key? key, required this.asyncValue}) : super(key: key);
+  final Object error;
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(child: Text('Error: ${asyncValue.error}'));
+    return SliverToBoxAdapter(child: Text('Error: ${error.toString()}'));
   }
 }

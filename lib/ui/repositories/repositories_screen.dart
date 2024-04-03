@@ -76,10 +76,6 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     final initialLoading = repositoryState.isLoading && repositories.isEmpty;
     final loadingMore = repositoryState.isLoading && repositories.isNotEmpty;
 
-    if (repositoryState.hasError) {
-      return [SliverAsyncError(asyncValue: repositoryState)];
-    }
-
     return initialLoading
         ? shimmerLoading()
         : repositories.isEmpty
@@ -92,6 +88,7 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
                   ),
                 ),
                 if (loadingMore) const SliverLoadingSpinner(),
+                if (repositoryState.hasError) SliverErrorMessage(error: repositoryState.error!),
               ];
   }
 

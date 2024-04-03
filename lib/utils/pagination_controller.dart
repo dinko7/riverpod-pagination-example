@@ -28,7 +28,7 @@ mixin AsyncPaginationController<T, I> on AsyncNotifier<List<T>> implements Pagin
     final newState = await AsyncValue.guard<List<T>>(() async {
       currentPage = nextPage(currentPage);
       final elements = await loadPage(currentPage);
-      return [...?state.value, ...elements];
+      return [...?state.valueOrNull, ...elements];
     });
     state = newState;
   }
