@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Material 3 GitHub Light Theme
-ThemeData material3GitHubLightTheme = ThemeData(
+ThemeData gitHubLightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: Color(0xFFFFFFFF),
     foregroundColor: Color(0xFF24292E),
@@ -28,7 +28,7 @@ ThemeData material3GitHubLightTheme = ThemeData(
 );
 
 // Material 3 GitHub Dark Theme
-ThemeData material3GitHubDarkTheme = ThemeData(
+ThemeData gitHubDarkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: Color(0xFF161B22),
     foregroundColor: Color(0xFFFFFFFF),

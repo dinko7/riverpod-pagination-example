@@ -10,13 +10,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProviderScope(
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: material3GitHubLightTheme,
-        darkTheme: material3GitHubDarkTheme,
-        // theme: ThemeData(
-        //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        //   useMaterial3: true,
-        // ),
+        title: 'Riverpod Pagination Demo',
+        theme: gitHubLightTheme,
+        darkTheme: gitHubDarkTheme,
         home: const RepositoriesScreen(),
       ),
     );

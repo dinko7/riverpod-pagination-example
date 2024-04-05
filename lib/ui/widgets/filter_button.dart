@@ -19,12 +19,13 @@ class FilterButton extends StatelessWidget {
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
-              side: const BorderSide(color: Colors.black, width: 1),
+              side: BorderSide(
+                  color: Theme.of(context).colorScheme.onBackground, width: 1),
             ),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.tune_outlined,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onBackground,
             size: 24,
           ),
         ));
