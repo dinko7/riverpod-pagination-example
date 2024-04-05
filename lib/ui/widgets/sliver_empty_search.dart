@@ -14,7 +14,7 @@ class SliverEmptySearch extends StatelessWidget {
           children: [
             const Icon(Icons.search_off, size: 100),
             const SizedBox(height: 16),
-            Text(text, style: Theme.of(context).textTheme.headline6),
+            Text(text, style: Theme.of(context).textTheme.titleLarge),
           ],
         ),
       ),

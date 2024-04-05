@@ -8,8 +8,8 @@ class SliverListTileShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        baseColor: Theme.of(context).shimmerBaseColor,
+        highlightColor: Theme.of(context).shimmerHighlightColor,
         child: ListTile(
           title: Container(
             width: double.infinity,
@@ -25,4 +25,12 @@ class SliverListTileShimmer extends StatelessWidget {
       ),
     );
   }
+}
+
+extension _ShimmerColorsExtension on ThemeData {
+  Color get shimmerBaseColor =>
+      brightness == Brightness.light ? Colors.grey[300]! : Colors.grey[700]!;
+
+  Color get shimmerHighlightColor =>
+      brightness == Brightness.light ? Colors.grey[100]! : Colors.grey[500]!;
 }

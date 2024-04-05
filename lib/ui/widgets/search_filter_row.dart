@@ -10,7 +10,7 @@ class SearchFilterRow extends ConsumerWidget {
   final AlwaysAliveProviderBase<RepositoryFilter> filterProvider;
   final Function(RepositoryFilter) onFilterChanged;
 
-  SearchFilterRow({
+  const SearchFilterRow({super.key, 
     required this.onSearch,
     required this.filterProvider,
     required this.onFilterChanged,

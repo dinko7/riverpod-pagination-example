@@ -18,9 +18,11 @@ class RepositoriesScreen extends ConsumerStatefulWidget {
 }
 
 class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
-  RepositoriesViewModel get viewModel => ref.read(repositoriesViewModelProvider.notifier);
+  RepositoriesViewModel get viewModel =>
+      ref.read(repositoriesViewModelProvider.notifier);
 
-  RepositoryFilterNotifier get filterController => ref.read(repositoryFilterNotifierProvider.notifier);
+  RepositoryFilterNotifier get filterController =>
+      ref.read(repositoryFilterNotifierProvider.notifier);
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +31,15 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Riverpod Pagination Demo'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
         child: NotificationListener(
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo is ScrollEndNotification &&
                 scrollInfo.metrics.axisDirection == AxisDirection.down &&
-                scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent) {
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent) {
               if (viewModel.canLoadMore) {
                 viewModel.loadNextPage();
               }
@@ -71,7 +72,8 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
     );
   }
 
-  List<Widget> repositories(BuildContext context, AsyncValue<List<Repository>> repositoryState) {
+  List<Widget> repositories(
+      BuildContext context, AsyncValue<List<Repository>> repositoryState) {
     final repositories = repositoryState.valueOrNull ?? [];
     final initialLoading = repositoryState.isLoading && repositories.isEmpty;
     final loadingMore = repositoryState.isLoading && repositories.isNotEmpty;
@@ -83,12 +85,14 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
             : [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => RepositoryItem(repository: repositories[index]),
+                    (context, index) =>
+                        RepositoryItem(repository: repositories[index]),
                     childCount: repositories.length,
                   ),
                 ),
                 if (loadingMore) const SliverLoadingSpinner(),
-                if (repositoryState.hasError) SliverErrorMessage(error: repositoryState.error!),
+                if (repositoryState.hasError)
+                  SliverErrorMessage(error: repositoryState.error!),
               ];
   }
 
