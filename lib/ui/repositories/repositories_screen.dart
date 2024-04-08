@@ -5,10 +5,11 @@ import 'package:riverpod_pagination_example/ui/repositories/repositories_view_mo
 import 'package:riverpod_pagination_example/ui/repositories/repository_filter_notifier.dart';
 import 'package:riverpod_pagination_example/ui/repositories/repository_item.dart';
 import 'package:riverpod_pagination_example/ui/widgets/search_filter_row.dart';
-import 'package:riverpod_pagination_example/ui/widgets/sliver_async_error.dart';
 import 'package:riverpod_pagination_example/ui/widgets/sliver_empty_search.dart';
 import 'package:riverpod_pagination_example/ui/widgets/sliver_list_tile_shimmer.dart';
 import 'package:riverpod_pagination_example/ui/widgets/sliver_loading_spinner.dart';
+import 'package:riverpod_pagination_example/utils/network_error_utils.dart';
+import 'package:riverpod_pagination_example/utils/snackbar.dart';
 
 class RepositoriesScreen extends ConsumerStatefulWidget {
   const RepositoriesScreen({super.key});
@@ -26,6 +27,11 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(repositoriesViewModelProvider, (_, state) {
+      if (!state.isLoading && state.hasError) {
+        context.showErrorSnackBar(state.dioException.errorMessage);
+      }
+    });
     final repositoriesState = ref.watch(repositoriesViewModelProvider);
 
     return Scaffold(
@@ -91,8 +97,6 @@ class _RepositoriesScreenState extends ConsumerState<RepositoriesScreen> {
                   ),
                 ),
                 if (loadingMore) const SliverLoadingSpinner(),
-                if (repositoryState.hasError)
-                  SliverErrorMessage(error: repositoryState.error!),
               ];
   }
 
