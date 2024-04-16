@@ -15,3 +15,7 @@ Run the project with the token by running the following command:
 ```bash
 flutter run --dart-define GITHUB_TOKEN=<your_token>
 ```
+
+# DEMO
+
+![](https://github.com/dinko7/riverpod-pagination-example/assets/1454449/fdb2f869-b05f-455e-84d4-6cda882891d8)
