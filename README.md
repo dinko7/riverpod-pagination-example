@@ -1,7 +1,7 @@
 # riverpod-pagination-example
 
 This is the complete code example for the
-article [Flutter Riverpod Pagination: Complete Guide]().
+article [Riverpod Pagination: The Ultimate Guide for Flutter Developers](https://dinkomarinac.dev/riverpod-pagination-the-ultimate-guide-for-flutter-developers).
 
 The project uses the the GitHub API, and demonstrates how to do pagination,
 sorting, and filtering with Riverpod's AsyncNotifier.
